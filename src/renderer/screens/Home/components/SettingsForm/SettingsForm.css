@@ -1,0 +1,14 @@
+.btn {
+  cursor: pointer;
+  display: inline-block;
+  border: 0;
+  background: var(--secondary-background-color);
+  color: white;
+  padding: 7px 10px;
+  margin-top: 10px;
+}
+
+.btn:active,
+.btn:focus {
+  outline: 0;
+}
