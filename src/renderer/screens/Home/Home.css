@@ -11,7 +11,7 @@
 }
 
 .content li {
-  padding: 10px 0;
+  padding: 10px;
   border-bottom: 1px #555 solid;
   background: var(--secondary-background-color);
 }
