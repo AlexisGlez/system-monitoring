@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import { ipcRenderer } from 'electron'
 
 import { Home } from './screens/Home'
 
@@ -24,10 +25,19 @@ const NavItem: React.FC<NavItemProps> = ({ id, icon, label, isActive, onItemClic
 const App: React.FC<{}> = () => {
   const [selectedTab, setSelectedTab] = React.useState<'cpu' | 'system' | 'settings'>('cpu')
 
+  const navRef = React.useRef<HTMLElement>(null)
+  React.useEffect(() => {
+    ipcRenderer.on('nav:toggle', () => {
+      if (navRef.current) {
+        navRef.current.classList.toggle('hide')
+      }
+    })
+  }, [])
+
   return (
     <div className="app">
       <Home selectedTab={selectedTab} />
-      <nav id="nav">
+      <nav id="nav" ref={navRef}>
         <ul>
           <NavItem
             id="cpu"
