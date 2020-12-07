@@ -7,11 +7,13 @@ import { isProd } from '@main/utils'
 export class MainWindow extends BrowserWindow {
   constructor() {
     super({
-      height: 530,
-      width: isProd ? 480 : 800,
-      icon: nativeImage.createFromPath(`${__dirname}/public/icons/Icon_256x256.png`),
-      backgroundColor: 'white',
+      title: 'System Monitoring',
+      height: 500,
+      width: isProd ? 355 : 800,
+      icon: nativeImage.createFromPath(`${__dirname}/public/icons/icon.png`),
       resizable: !isProd,
+      show: false,
+      opacity: 0.9,
       webPreferences: {
         nodeIntegration: true,
         devTools: !isProd,

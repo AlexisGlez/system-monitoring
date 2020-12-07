@@ -1,10 +1,23 @@
-import { app, BrowserWindow, Menu } from 'electron'
+import { app, BrowserWindow, Menu, ipcMain } from 'electron'
 
 import { isMacOS } from './utils'
 import { createAppMenu } from './menu'
 import { MainWindow } from './windows/Main'
+import { AppTray } from './Tray'
+import { Store } from './Store'
+
+const store = new Store({
+  configName: 'user-settings',
+  defaults: {
+    settings: {
+      cpuOverload: 80,
+      alertFrequency: 5,
+    },
+  },
+})
 
 let mainWindow: Electron.BrowserWindow | null
+let tray: AppTray | null
 
 function createMainWindow(): void {
   mainWindow = new MainWindow()
@@ -28,11 +41,34 @@ app.on('ready', () => {
     return
   }
 
-  const mainMenu = Menu.buildFromTemplate(createAppMenu())
+  mainWindow.webContents.on('dom-ready', () => {
+    mainWindow!.webContents.send('settings:get', store.get('settings'))
+  })
+
+  const mainMenu = Menu.buildFromTemplate(createAppMenu(mainWindow))
 
   Menu.setApplicationMenu(mainMenu)
 
-  mainWindow.on('closed', () => (mainWindow = null))
+  mainWindow.on('close', (e) => {
+    if (!(app as any).isQuitting) {
+      e.preventDefault()
+      mainWindow!.hide()
+    }
+
+    return true
+  })
+
+  tray = new AppTray(mainWindow)
+})
+
+ipcMain.on('settings:set', (_, value) => {
+  store.set('settings', value)
+
+  if (!mainWindow) {
+    return
+  }
+
+  mainWindow.webContents.send('settings:get', store.get('settings'))
 })
 
 // Quit when all windows are closed.
@@ -47,7 +83,7 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
   // On OS X it"s common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null || BrowserWindow.getAllWindows().length === 0) {
+  if (mainWindow == null || BrowserWindow.getAllWindows().length === 0) {
     createMainWindow()
   }
 })

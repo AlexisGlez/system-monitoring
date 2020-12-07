@@ -1,9 +1,23 @@
-import { isProd } from '../utils'
+import { BrowserWindow } from 'electron'
 
-export function createAppMenu(): Array<Electron.MenuItemConstructorOptions> {
+import { isProd, isMacOS } from '../utils'
+
+export function createAppMenu(
+  mainWindow: BrowserWindow,
+): Array<Electron.MenuItemConstructorOptions> {
   const menu: Array<Electron.MenuItemConstructorOptions> = [
+    ...((isMacOS ? [{ role: 'appMenu' }] : []) as Array<Electron.MenuItemConstructorOptions>),
     {
       role: 'fileMenu',
+    },
+    {
+      label: 'View',
+      submenu: [
+        {
+          label: 'Toggle Navigation',
+          click: () => mainWindow.webContents.send('nav:toggle'),
+        },
+      ],
     },
   ]
 

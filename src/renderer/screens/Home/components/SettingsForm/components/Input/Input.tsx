@@ -17,7 +17,15 @@ export const Input: React.FC<InputProps> = ({ id, label, value, onChange }) => {
         type="number"
         id={id}
         value={value}
-        onChange={(e) => onChange(parseInt(e.target.value))}
+        onChange={(e) => {
+          const parsedValue = parseInt(e.target.value)
+
+          if (Number.isNaN(parsedValue) || parsedValue <= 0) {
+            return
+          }
+
+          onChange(parsedValue)
+        }}
       />
     </div>
   )

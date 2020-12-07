@@ -19,6 +19,14 @@ export const SettingsForm: React.FC<SettingsFormProps> = ({
   const [cpuOverload, setCpuOverload] = React.useState(cpuOverloadDefaultValue)
   const [alertFrequency, setAlertFrequency] = React.useState(alertFrequencyDefaultValue)
 
+  React.useEffect(() => {
+    setCpuOverload(cpuOverloadDefaultValue)
+  }, [cpuOverloadDefaultValue])
+
+  React.useEffect(() => {
+    setAlertFrequency(alertFrequencyDefaultValue)
+  }, [alertFrequencyDefaultValue])
+
   const onFormSubmitted = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
 
